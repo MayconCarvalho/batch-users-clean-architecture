@@ -1,0 +1,46 @@
+services:
+    database:
+        image: postgres:13-alpine
+        container_name: user_import_db
+        restart: always
+        environment:
+            POSTGRES_DB: user_import
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: password
+        ports:
+            - "5432:5432"
+        volumes:
+            - postgres_data:/var/lib/postgresql/data
+            - ./src/main/resources/scripts/:/docker-entrypoint-initdb.d/
+
+    rabbitmq:
+        image: rabbitmq:3-management
+        container_name: user_import_rabbitmq
+        restart: always
+        environment:
+            RABBITMQ_DEFAULT_USER: guest
+            RABBITMQ_DEFAULT_PASS: guest
+        ports:
+            - "5672:5672"   # port for AMQP
+            - "15672:15672" # interface for management
+
+    app:
+        build: .
+        container_name: user_import_service
+        restart: always
+        depends_on:
+            - database
+            - rabbitmq
+        environment:
+            SPRING_DATASOURCE_URL: jdbc:postgresql://database:5432/user_import
+            SPRING_DATASOURCE_USERNAME: postgres
+            SPRING_DATASOURCE_PASSWORD: password
+            SPRING_RABBITMQ_HOST: rabbitmq
+            SPRING_RABBITMQ_PORT: 5672
+            RABBITMQ_DEFAULT_USER: guest
+            RABBITMQ_DEFAULT_PASS: guest
+        ports:
+            - "8080:8080"
+
+volumes:
+    postgres_data:

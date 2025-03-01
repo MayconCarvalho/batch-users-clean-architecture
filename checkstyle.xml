@@ -1,0 +1,131 @@
+<?xml version="1.0"?>
+<!DOCTYPE module PUBLIC
+        "-//Checkstyle//DTD Checkstyle Configuration 1.3//EN"
+        "https://checkstyle.org/dtds/configuration_1_3.dtd">
+<module name="Checker">
+    <property name="fileExtensions" value="java"/>
+
+    <!-- Enforce a maximum line length of 150 characters -->
+    <module name="LineLength">
+        <property name="max" value="150"/>
+    </module>
+
+    <!-- Limit the number of lines in a file -->
+    <module name="FileLength"/>
+
+    <module name="TreeWalker">
+        <!-- Enforce Javadoc comments on methods -->
+        <module name="JavadocMethod"/>
+
+        <!-- Enforce whitespace after keywords like 'if', 'for', etc. -->
+        <module name="WhitespaceAfter"/>
+
+        <!-- Enforce whitespace around operators like '=', '+', '-', etc. -->
+        <module name="WhitespaceAround"/>
+
+        <!-- Enforce no padding within method parameters -->
+        <module name="MethodParamPad"/>
+
+        <!-- Disallow line wrapping -->
+        <module name="NoLineWrap"/>
+
+        <!-- Enforce regular expressions for single-line comments -->
+        <module name="RegexpSinglelineJava"/>
+
+        <!-- Enforce braces for if, else, for, while, and do statements -->
+        <module name="NeedBraces"/>
+
+        <!-- Disallow empty code blocks -->
+        <module name="EmptyBlock"/>
+
+        <!-- Enforce equals and hashCode methods to be overridden together -->
+        <module name="EqualsHashCode"/>
+
+        <!-- Limit the complexity of boolean expressions -->
+        <module name="BooleanExpressionComplexity"/>
+
+        <!-- Limit the number of fields in a class -->
+        <module name="ClassDataAbstractionCoupling"/>
+
+        <!-- Limit the number of classes a class can depend on -->
+        <module name="ClassFanOutComplexity">
+            <property name="max" value="25"/>
+        </module>
+
+        <!-- Limit the cyclomatic complexity of methods -->
+        <module name="CyclomaticComplexity"/>
+
+        <!-- Limit the number of non-comment source statements (NCSS) in a method -->
+        <module name="JavaNCSS"/>
+
+        <!-- Limit the NPath complexity of methods -->
+        <module name="NPathComplexity"/>
+
+        <!-- Limit the number of lines in a method -->
+        <module name="MethodLength"/>
+
+        <!-- Limit the number of parameters in a method -->
+        <module name="ParameterNumber"/>
+
+        <!-- Disallow redundant imports -->
+        <module name="RedundantImport"/>
+
+        <!-- Disallow unused imports -->
+        <module name="UnusedImports"/>
+
+        <!-- SonarLint rules -->
+        <!-- Enforce method names to start with a lowercase letter and follow camelCase -->
+        <module name="MethodName">
+            <property name="format" value="^[a-z][a-zA-Z0-9]*$"/>
+        </module>
+
+        <!-- Enforce class names to start with an uppercase letter and follow PascalCase -->
+        <module name="TypeName">
+            <property name="format" value="^[A-Z][a-zA-Z0-9]*$"/>
+        </module>
+
+        <!-- Enforce constant names to be in uppercase letters with underscores -->
+        <module name="ConstantName">
+            <property name="format" value="^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$"/>
+        </module>
+
+        <!-- Enforce local variable names to start with a lowercase letter and follow camelCase -->
+        <module name="LocalVariableName">
+            <property name="format" value="^[a-z][a-zA-Z0-9]*$"/>
+        </module>
+
+        <!-- Enforce member (field) names to start with a lowercase letter and follow camelCase -->
+        <module name="MemberName">
+            <property name="format" value="^[a-z][a-zA-Z0-9]*$"/>
+        </module>
+
+        <!-- Enforce interface names to start with an uppercase letter and follow PascalCase -->
+        <module name="InterfaceTypeParameterName">
+            <property name="format" value="^[A-Z][a-zA-Z0-9]*$"/>
+        </module>
+
+        <!-- Enforce package names to be in lowercase letters and follow dot notation -->
+        <module name="PackageName">
+            <property name="format" value="^[a-z]+(\.[a-z][a-z0-9_]*)*$"/>
+        </module>
+
+        <!-- Enforce consistent code formatting -->
+        <module name="Indentation">
+            <property name="basicOffset" value="4"/>
+            <property name="braceAdjustment" value="0"/>
+            <property name="caseIndent" value="4"/>
+            <property name="lineWrappingIndentation" value="8"/>
+            <property name="tabWidth" value="4"/>
+        </module>
+
+        <!-- Enforce best practices for exception handling -->
+        <module name="IllegalCatch"/>
+
+        <!-- Enforce best practices for resource management -->
+        <module name="FinalLocalVariable"/>
+        <module name="FinalParameters"/>
+
+        <!-- Enforce best practices for class design -->
+        <module name="AvoidStarImport"/>
+    </module>
+</module>
