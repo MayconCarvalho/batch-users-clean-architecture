@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -26,7 +28,23 @@ public class ImportListUserUseCase implements UseCaseInterface<ImportListUserInp
             throw new UserImportListIsNullException("UserInputList cannot be null");
         }
 
-        final var userImportedList = userInputList.getUsersInputList().stream()
+        final var userImportedList = getUserImportedList(userInputList);
+
+        userImportedList.parallelStream()
+                .filter(user -> user.getStatus() == ImportStatus.PENDING)
+                .forEach(userImportProducer::send);
+
+        final var statusUserList = userImportedList.parallelStream()
+                .map(this::mapUserImportToOutputDto)
+                .toList();
+
+        return ImportListUserOutputDto.builder()
+                .usersInputList(statusUserList)
+                .build();
+    }
+
+    private List<UserImport> getUserImportedList(ImportListUserInputDto userInputList) {
+        return userInputList.getUsersInputList().stream()
                 .map(userInput -> {
                     try {
                         final var userImport = UserImport.builder()
@@ -46,18 +64,6 @@ public class ImportListUserUseCase implements UseCaseInterface<ImportListUserInp
                                 .build();
                     }
                 }).toList();
-
-        userImportedList.parallelStream()
-                .filter(user -> user.getStatus() == ImportStatus.PENDING)
-                .forEach(userImportProducer::send);
-
-        final var statusUserList = userImportedList.parallelStream()
-                .map(this::mapUserImportToOutputDto)
-                .toList();
-
-        return ImportListUserOutputDto.builder()
-                .usersInputList(statusUserList)
-                .build();
     }
 
     private boolean listIsNotEmpty(final ImportListUserInputDto userInputList) {
