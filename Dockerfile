@@ -4,7 +4,7 @@ COPY . .
 RUN mvn clean package -DskipTests
 
 # Use an official OpenJDK runtime as a parent image
-FROM openjdk:21-jdk-alpine
+FROM amazoncorretto:21-alpine
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
 

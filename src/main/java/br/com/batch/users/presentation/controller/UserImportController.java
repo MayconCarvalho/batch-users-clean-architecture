@@ -46,7 +46,7 @@ public class UserImportController {
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ImportListUserInputDto.class)))
     })
-    @PostMapping("/import/batch-imports")
+    @PostMapping("/import/batch")
     public ImportListUserOutputDto importListUser(final @RequestBody ImportListUserInputDto importListUserInputDto) {
         return importListUserUseCase.execute(importListUserInputDto);
     }
@@ -57,7 +57,7 @@ public class UserImportController {
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ImportUserInputDto.class)))
     })
-    @PostMapping("/import/single-import")
+    @PostMapping("/import/user")
     public ImportUserOutputDto importUser(final @RequestBody ImportUserInputDto importUserInput) {
         return importUserUseCase.execute(importUserInput);
     }
@@ -71,7 +71,7 @@ public class UserImportController {
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ErrorResponseDto.class)))
     })
-    @GetMapping("/{id}")
+    @GetMapping("/{id}/status")
     public FindStatusUserByIdOutputDto findById(
             final @Parameter(description = "ID of the user import to be retrieved", required = true)
             @PathVariable UUID id) {
