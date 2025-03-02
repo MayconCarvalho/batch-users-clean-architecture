@@ -15,5 +15,6 @@ import java.util.UUID;
 public class UserOutputDto {
 
     private UUID id;
+    private String email;
     private ImportStatus status;
 }

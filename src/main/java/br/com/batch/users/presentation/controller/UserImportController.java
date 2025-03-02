@@ -12,7 +12,7 @@ import br.com.batch.users.application.import_user.ImportUserInputDto;
 import br.com.batch.users.application.import_user.ImportUserOutputDto;
 import br.com.batch.users.application.import_user.ImportUserUseCase;
 import br.com.batch.users.application.find_status_user.FindStatusUserByIdUseCase;
-import br.com.batch.users.presentation.exception.ErrorResponseDto;
+import br.com.batch.users.presentation.controller.exception.exception.ErrorResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;

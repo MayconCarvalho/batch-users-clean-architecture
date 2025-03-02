@@ -1,7 +1,6 @@
 package br.com.batch.users.unit;
 
 import br.com.batch.users.application.import_list_user.ImportListUserInputDto;
-import br.com.batch.users.application.import_list_user.ImportListUserOutputDto;
 import br.com.batch.users.application.import_list_user.ImportListUserUseCase;
 import br.com.batch.users.application.import_list_user.UserInputDto;
 import br.com.batch.users.domain.exception.UserImportListIsNullException;
@@ -9,21 +8,23 @@ import br.com.batch.users.domain.model.ImportStatus;
 import br.com.batch.users.domain.model.UserImport;
 import br.com.batch.users.domain.repository.UserImportRepositoryInterface;
 import br.com.batch.users.infrastructure.messaging.UserImportProducer;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verifyNoInteractions;
 
+@ExtendWith(MockitoExtension.class)
 class ImportListUserUseCaseTest {
 
     @Mock
@@ -35,26 +36,30 @@ class ImportListUserUseCaseTest {
     @InjectMocks
     private ImportListUserUseCase importListUserUseCase;
 
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
-
     @Test
     void executeSuccessfullyImportsUsers() {
-        ImportListUserInputDto inputDto = new ImportListUserInputDto(List.of(
-                new UserInputDto("John Doe", "john.doe@example.com", "123456789"),
-                new UserInputDto("Jane Doe", "jane.doe@example.com", "987654321")
-        ));
+        final var inputDto = ImportListUserInputDto.builder()
+                .usersInputList(List.of(
+                        UserInputDto.builder()
+                                .name("John Doe")
+                                .email("john.doe@example.com")
+                                .documentNumber("123456789")
+                                .build(),
+                        UserInputDto.builder()
+                                .name("Jane Doe")
+                                .email("jane.doe@example.com")
+                                .documentNumber("987654321")
+                                .build()))
+                .build();
 
-        UserImport userImport1 = UserImport.builder()
+        final var userImport1 = UserImport.builder()
                 .name("John Doe")
                 .email("john.doe@example.com")
                 .documentNumber("123456789")
                 .status(ImportStatus.PENDING)
                 .build();
 
-        UserImport userImport2 = UserImport.builder()
+        final var userImport2 = UserImport.builder()
                 .name("Jane Doe")
                 .email("jane.doe@example.com")
                 .documentNumber("987654321")
@@ -64,7 +69,7 @@ class ImportListUserUseCaseTest {
         when(userImportRepositoryInterface.importUser(any(UserImport.class)))
                 .thenReturn(userImport1, userImport2);
 
-        ImportListUserOutputDto outputDto = importListUserUseCase.execute(inputDto);
+        final var outputDto = importListUserUseCase.execute(inputDto);
 
         assertEquals(2, outputDto.getUsersInputList().size());
         verify(userImportProducer, times(2)).send(any(UserImport.class));
@@ -72,44 +77,60 @@ class ImportListUserUseCaseTest {
 
     @Test
     void executeReturnsFailedStatusWhenExceptionOccurs() {
-        ImportListUserInputDto inputDto = new ImportListUserInputDto(List.of(
-                new UserInputDto("John Doe", "john.doe@example.com", "123456789"),
-                new UserInputDto("Jane Doe", "jane.doe@example.com", "987654321")
-        ));
+        final var inputDto = ImportListUserInputDto.builder()
+                .usersInputList(List.of(
+                    UserInputDto.builder()
+                            .name("John Doe")
+                            .email("john-invalid-email")
+                            .documentNumber("123456789")
+                            .build(),
+                    UserInputDto.builder()
+                            .name("Jane Doe")
+                            .email("john-invalid-email")
+                            .documentNumber("987654321")
+                            .build()))
+                .build();
 
-        when(userImportRepositoryInterface.importUser(any(UserImport.class)))
-                .thenThrow(new RuntimeException("Database error"));
-
-        ImportListUserOutputDto outputDto = importListUserUseCase.execute(inputDto);
+        final var outputDto = importListUserUseCase.execute(inputDto);
 
         assertEquals(ImportStatus.FAILED, outputDto.getUsersInputList().get(0).getStatus());
         assertEquals(ImportStatus.FAILED, outputDto.getUsersInputList().get(1).getStatus());
-        verify(userImportProducer, times(2)).send(any(UserImport.class));
+        verifyNoInteractions(userImportRepositoryInterface);
+        verifyNoInteractions(userImportProducer);
     }
 
     @Test
     void executeSuccessfullyImportsUsersWithMixedResults() {
-        ImportListUserInputDto inputDto = new ImportListUserInputDto(List.of(
-                new UserInputDto("John Doe", "john.doe@example.com", "123456789"),
-                new UserInputDto("Jane Doe", "jane.doe@example.com", "987654321")
-        ));
+        final var inputDto = ImportListUserInputDto.builder()
+                .usersInputList(List.of(
+                    UserInputDto.builder()
+                            .name("John Doe")
+                            .email("john.doe@example.com")
+                            .documentNumber("123456789")
+                            .build(),
+                    UserInputDto.builder()
+                            .name("Jane Doe")
+                            .email("jane.doe.invalid.email")
+                            .documentNumber("987654321")
+                            .build()))
+                .build();
 
-        UserImport userImport1 = UserImport.builder()
+        final var userImport1 = UserImport.builder()
                 .name("John Doe")
                 .email("john.doe@example.com")
                 .documentNumber("123456789")
                 .status(ImportStatus.PENDING)
                 .build();
 
-        when(userImportRepositoryInterface.importUser(any(UserImport.class)))
-                .thenReturn(userImport1)
-                .thenThrow(new RuntimeException("Database error"));
+        when(userImportRepositoryInterface.importUser(userImport1))
+                .thenReturn(userImport1);
 
-        ImportListUserOutputDto outputDto = importListUserUseCase.execute(inputDto);
+        final var outputDto = importListUserUseCase.execute(inputDto);
 
         assertEquals(ImportStatus.PENDING, outputDto.getUsersInputList().get(0).getStatus());
         assertEquals(ImportStatus.FAILED, outputDto.getUsersInputList().get(1).getStatus());
-        verify(userImportProducer, times(2)).send(any(UserImport.class));
+        verify(userImportRepositoryInterface, times(1)).importUser(userImport1);
+        verify(userImportProducer, times(1)).send(userImport1);
     }
 
     @Test
@@ -119,14 +140,14 @@ class ImportListUserUseCaseTest {
 
     @Test
     void executeThrowsExceptionWhenUserInputListIsNull() {
-        ImportListUserInputDto inputDto = new ImportListUserInputDto(null);
+        final var inputDto = new ImportListUserInputDto(null);
 
         assertThrows(UserImportListIsNullException.class, () -> importListUserUseCase.execute(inputDto));
     }
 
     @Test
     void executeThrowsExceptionWhenUserInputListIsEmpty() {
-        ImportListUserInputDto inputDto = new ImportListUserInputDto(List.of());
+        final var inputDto = new ImportListUserInputDto(List.of());
 
         assertThrows(UserImportListIsNullException.class, () -> importListUserUseCase.execute(inputDto));
     }

@@ -1,11 +1,11 @@
 package br.com.batch.users.application.import_list_user;
 
-import br.com.batch.users.domain.exception.EmailInvalidException;
 import br.com.batch.users.domain.exception.UserImportListIsNullException;
 import br.com.batch.users.domain.model.ImportStatus;
 import br.com.batch.users.domain.model.UserImport;
 import br.com.batch.users.domain.repository.UserImportRepositoryInterface;
 import br.com.batch.users.domain.seedwork.UseCaseInterface;
+import br.com.batch.users.domain.utils.EmailValidator;
 import br.com.batch.users.infrastructure.messaging.UserImportProducer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ImportListUserUseCase implements UseCaseInterface<ImportListUserInputDto, ImportListUserOutputDto> {
 
-    private final UserImportRepositoryInterface userImportRepositoryInterface;
+    private final UserImportRepositoryInterface userImportRepository;
     private final UserImportProducer userImportProducer;
 
     @Override
@@ -43,19 +43,11 @@ public class ImportListUserUseCase implements UseCaseInterface<ImportListUserInp
                 .build();
     }
 
-    private List<UserImport> getUserImportedList(ImportListUserInputDto userInputList) {
+    private List<UserImport> getUserImportedList(final ImportListUserInputDto userInputList) {
         return userInputList.getUsersInputList().stream()
                 .map(userInput -> {
-                    try {
-                        final var userImport = UserImport.builder()
-                                .name(userInput.getName())
-                                .email(userInput.getEmail())
-                                .documentNumber(userInput.getDocumentNumber())
-                                .status(ImportStatus.PENDING)
-                                .build();
-                        return userImportRepositoryInterface.importUser(userImport);
-                    } catch (final EmailInvalidException e) {
-                        log.error("Error importing user: {}. Cause {}", userInput, e.getMessage());
+                    if (!EmailValidator.validate(userInput.getEmail())) {
+                        log.warn("Error importing user: {}. Cause Email is invalid", userInput);
                         return UserImport.builder()
                                 .name(userInput.getName())
                                 .email(userInput.getEmail())
@@ -63,6 +55,13 @@ public class ImportListUserUseCase implements UseCaseInterface<ImportListUserInp
                                 .status(ImportStatus.FAILED)
                                 .build();
                     }
+                    final var userImport = UserImport.builder()
+                            .name(userInput.getName())
+                            .email(userInput.getEmail())
+                            .documentNumber(userInput.getDocumentNumber())
+                            .status(ImportStatus.PENDING)
+                            .build();
+                    return userImportRepository.importUser(userImport);
                 }).toList();
     }
 
@@ -73,6 +72,7 @@ public class ImportListUserUseCase implements UseCaseInterface<ImportListUserInp
     private UserOutputDto mapUserImportToOutputDto(final UserImport userImport) {
         return UserOutputDto.builder()
                 .id(userImport.getId())
+                .email(userImport.getEmail())
                 .status(userImport.getStatus())
                 .build();
     }

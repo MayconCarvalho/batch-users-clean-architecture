@@ -1,11 +1,11 @@
-package br.com.batch.users.infrastructure.user.postgres;
+package br.com.batch.users.infrastructure.database.postgres;
 
-import br.com.batch.users.domain.exception.EmailInvalidException;
 import br.com.batch.users.domain.exception.UserImportNotFoundException;
+import br.com.batch.users.domain.model.ImportStatus;
 import br.com.batch.users.domain.model.UserImport;
 import br.com.batch.users.domain.repository.UserImportRepositoryInterface;
-import br.com.batch.users.domain.utils.EmailValidator;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.exception.DataException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,10 +20,6 @@ public class UserImportRepositoryInterfaceImpl implements UserImportRepositoryIn
 
     @Override
     public UserImport importUser(final UserImport user) {
-        if (!EmailValidator.validate(user.getEmail())) {
-            throw new EmailInvalidException("Invalid email: " + user.getEmail());
-        }
-
         var userImportEntity = UserImportEntity.builder()
                 .name(user.getName())
                 .email(user.getEmail())
@@ -31,9 +27,14 @@ public class UserImportRepositoryInterfaceImpl implements UserImportRepositoryIn
                 .status(user.getStatus())
                 .build();
 
-        userImportEntity = repository.save(userImportEntity);
-        user.setId(userImportEntity.getId());
-        return user;
+        try {
+            userImportEntity = repository.save(userImportEntity);
+            user.setId(userImportEntity.getId());
+            return user;
+        } catch (final DataException ex) {
+            userImportEntity.setStatus(ImportStatus.FAILED);
+            return user;
+        }
     }
 
     @Override

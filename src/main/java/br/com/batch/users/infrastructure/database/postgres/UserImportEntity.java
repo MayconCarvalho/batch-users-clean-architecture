@@ -1,4 +1,4 @@
-package br.com.batch.users.infrastructure.user.postgres;
+package br.com.batch.users.infrastructure.database.postgres;
 
 import br.com.batch.users.domain.model.ImportStatus;
 import jakarta.persistence.Entity;

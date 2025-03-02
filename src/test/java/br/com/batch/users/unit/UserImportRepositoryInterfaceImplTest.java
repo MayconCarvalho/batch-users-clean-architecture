@@ -1,17 +1,16 @@
 package br.com.batch.users.unit;
 
-import br.com.batch.users.domain.exception.EmailInvalidException;
 import br.com.batch.users.domain.exception.UserImportNotFoundException;
 import br.com.batch.users.domain.model.ImportStatus;
 import br.com.batch.users.domain.model.UserImport;
-import br.com.batch.users.infrastructure.user.postgres.UserImportRepositoryInterfaceImpl;
-import br.com.batch.users.infrastructure.user.postgres.UserImportRepository;
-import br.com.batch.users.infrastructure.user.postgres.UserImportEntity;
-import org.junit.jupiter.api.BeforeEach;
+import br.com.batch.users.infrastructure.database.postgres.UserImportEntity;
+import br.com.batch.users.infrastructure.database.postgres.UserImportRepository;
+import br.com.batch.users.infrastructure.database.postgres.UserImportRepositoryInterfaceImpl;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 class UserImportRepositoryInterfaceImplTest {
 
     @Mock
@@ -30,21 +30,16 @@ class UserImportRepositoryInterfaceImplTest {
     @InjectMocks
     private UserImportRepositoryInterfaceImpl userImportRepositoryInterfaceImpl;
 
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
-
     @Test
     void importUserSuccessfully() {
-        UserImport user = UserImport.builder()
+        final var user = UserImport.builder()
                 .name("John Doe")
                 .email("john.doe@example.com")
                 .documentNumber("123456789")
                 .status(ImportStatus.PENDING)
                 .build();
 
-        UserImportEntity userImportEntity = UserImportEntity.builder()
+        final var userImportEntity = UserImportEntity.builder()
                 .id(UUID.randomUUID())
                 .name("John Doe")
                 .email("john.doe@example.com")
@@ -54,43 +49,19 @@ class UserImportRepositoryInterfaceImplTest {
 
         when(repository.save(any(UserImportEntity.class))).thenReturn(userImportEntity);
 
-        UserImport result = userImportRepositoryInterfaceImpl.importUser(user);
+        final var result = userImportRepositoryInterfaceImpl.importUser(user);
 
         assertEquals(userImportEntity.getId(), result.getId());
     }
 
     @Test
-    void importUserThrowsEmailInvalidException() {
-        UserImport user = UserImport.builder()
-                .name("John Doe")
-                .email("invalid-email")
-                .documentNumber("123456789")
-                .status(ImportStatus.PENDING)
-                .build();
-
-        assertThrows(EmailInvalidException.class, () -> userImportRepositoryInterfaceImpl.importUser(user));
-    }
-
-    @Test
-    void executeThrowsExceptionWhenEmailIsNull() {
-        UserImport user = UserImport.builder()
-                .name("John Doe")
-                .email(null)
-                .documentNumber("123456789")
-                .status(ImportStatus.PENDING)
-                .build();
-
-        assertThrows(EmailInvalidException.class, () -> userImportRepositoryInterfaceImpl.importUser(user));
-    }
-
-    @Test
     void updateStatusUserSuccessfully() {
-        UserImport user = UserImport.builder()
+        final var user = UserImport.builder()
                 .id(UUID.randomUUID())
                 .status(ImportStatus.COMPLETED)
                 .build();
 
-        UserImportEntity userImportEntity = UserImportEntity.builder()
+        final var userImportEntity = UserImportEntity.builder()
                 .id(user.getId())
                 .status(ImportStatus.PENDING)
                 .build();
@@ -104,7 +75,7 @@ class UserImportRepositoryInterfaceImplTest {
 
     @Test
     void updateStatusUserThrowsUserImportNotFoundException() {
-        UserImport user = UserImport.builder()
+        final var user = UserImport.builder()
                 .id(UUID.randomUUID())
                 .status(ImportStatus.COMPLETED)
                 .build();
@@ -116,9 +87,9 @@ class UserImportRepositoryInterfaceImplTest {
 
     @Test
     void findUserByIdSuccessfully() {
-        UUID userId = UUID.randomUUID();
+        final UUID userId = UUID.randomUUID();
 
-        UserImportEntity userImportEntity = UserImportEntity.builder()
+        final var userImportEntity = UserImportEntity.builder()
                 .id(userId)
                 .name("John Doe")
                 .email("john.doe@example.com")
@@ -128,25 +99,25 @@ class UserImportRepositoryInterfaceImplTest {
 
         when(repository.findById(userId)).thenReturn(Optional.of(userImportEntity));
 
-        Optional<UserImport> result = userImportRepositoryInterfaceImpl.findUserById(userId);
+        final Optional<UserImport> result = userImportRepositoryInterfaceImpl.findUserById(userId);
 
         assertEquals(userId, result.get().getId());
     }
 
     @Test
     void findUserByIdReturnsEmptyWhenNotFound() {
-        UUID userId = UUID.randomUUID();
+        final UUID userId = UUID.randomUUID();
 
         when(repository.findById(userId)).thenReturn(Optional.empty());
 
-        Optional<UserImport> result = userImportRepositoryInterfaceImpl.findUserById(userId);
+        final Optional<UserImport> result = userImportRepositoryInterfaceImpl.findUserById(userId);
 
         assertEquals(Optional.empty(), result);
     }
 
     @Test
     void findAllUsersSuccessfully() {
-        UserImportEntity user1 = UserImportEntity.builder()
+        final var user1 = UserImportEntity.builder()
                 .id(UUID.randomUUID())
                 .name("John Doe")
                 .email("john.doe@example.com")
@@ -154,7 +125,7 @@ class UserImportRepositoryInterfaceImplTest {
                 .status(ImportStatus.PENDING)
                 .build();
 
-        UserImportEntity user2 = UserImportEntity.builder()
+        final var user2 = UserImportEntity.builder()
                 .id(UUID.randomUUID())
                 .name("Jane Doe")
                 .email("jane.doe@example.com")
@@ -164,7 +135,7 @@ class UserImportRepositoryInterfaceImplTest {
 
         when(repository.findAll()).thenReturn(List.of(user1, user2));
 
-        List<UserImport> result = userImportRepositoryInterfaceImpl.findAllUsers();
+        final List<UserImport> result = userImportRepositoryInterfaceImpl.findAllUsers();
 
         assertEquals(2, result.size());
         assertEquals("John Doe", result.get(0).getName());
@@ -175,7 +146,7 @@ class UserImportRepositoryInterfaceImplTest {
     void findAllUsersReturnsEmptyListWhenNoUsersFound() {
         when(repository.findAll()).thenReturn(List.of());
 
-        List<UserImport> result = userImportRepositoryInterfaceImpl.findAllUsers();
+        final List<UserImport> result = userImportRepositoryInterfaceImpl.findAllUsers();
 
         assertEquals(0, result.size());
     }

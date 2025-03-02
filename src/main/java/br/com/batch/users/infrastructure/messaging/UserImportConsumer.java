@@ -2,7 +2,7 @@ package br.com.batch.users.infrastructure.messaging;
 
 import br.com.batch.users.domain.model.ImportStatus;
 import br.com.batch.users.domain.model.UserImport;
-import br.com.batch.users.infrastructure.user.postgres.UserImportRepositoryInterfaceImpl;
+import br.com.batch.users.infrastructure.database.postgres.UserImportRepositoryInterfaceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;

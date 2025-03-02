@@ -1,4 +1,4 @@
-package br.com.batch.users.presentation.exception;
+package br.com.batch.users.presentation.controller.exception.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

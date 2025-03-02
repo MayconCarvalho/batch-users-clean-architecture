@@ -2,39 +2,39 @@ services:
     database:
         image: postgres:17-alpine
         container_name: user_import_db
-        restart: always
+        restart: always # Always restart the container if it stops
         environment:
-            POSTGRES_DB: user_import
-            POSTGRES_USER: postgres
-            POSTGRES_PASSWORD: password
+            POSTGRES_DB: user_import # Database name
+            POSTGRES_USER: postgres # Database user
+            POSTGRES_PASSWORD: password # Database password
         ports:
-            - "5432:5432"
+            - "5432:5432" # Map port 5432 of the host to port 5432 of the container
         volumes:
-            - postgres_data:/var/lib/postgresql/data
-            - ./src/main/resources/scripts/:/docker-entrypoint-initdb.d/
+            - postgres_data:/var/lib/postgresql/data # Persist database data
+            - ./src/main/resources/scripts/:/docker-entrypoint-initdb.d/ # Initialize database with scripts
         healthcheck:
-            test: [ "CMD-SHELL", "pg_isready -U postgres" ]
-            interval: 15s
-            timeout: 10s
-            retries: 3
+            test: [ "CMD-SHELL", "pg_isready -U postgres" ] # Check if Postgres is ready
+            interval: 10s # Check every 10 seconds
+            timeout: 5s # Timeout after 5 seconds
+            retries: 5 # Retry 5 times before considering the service as unhealthy
         networks:
             - batch-users
 
     rabbitmq:
         image: rabbitmq:3-management
         container_name: user_import_rabbitmq
-        restart: always
+        restart: always # Always restart the container if it stops
         environment:
-            RABBITMQ_DEFAULT_USER: guest
-            RABBITMQ_DEFAULT_PASS: guest
+            RABBITMQ_DEFAULT_USER: guest # Default RabbitMQ user
+            RABBITMQ_DEFAULT_PASS: guest # Default RabbitMQ password
         ports:
-            - "5672:5672"   # port for AMQP
-            - "15672:15672" # interface for management
+            - "5672:5672"   # Map port 5672 of the host to port 5672 of the container (AMQP)
+            - "15672:15672" # Map port 15672 of the host to port 15672 of the container (management interface)
         healthcheck:
-            test: [ "CMD", "rabbitmq-diagnostics", "-q", "ping" ]
-            interval: 15s
-            timeout: 10s
-            retries: 3
+            test: [ "CMD", "rabbitmqctl", "status" ] # Check if RabbitMQ is running
+            interval: 10s # Check every 10 seconds
+            timeout: 5s # Timeout after 5 seconds
+            retries: 5 # Retry 5 times before considering the service as unhealthy
         networks:
             - batch-users
 
@@ -42,17 +42,19 @@ services:
         build: .
         container_name: user_import_app
         depends_on:
-            - database
-            - rabbitmq
+            database:
+                  condition: service_healthy # Wait for the database to be healthy
+            rabbitmq:
+                  condition: service_healthy # Wait for RabbitMQ to be healthy
         environment:
-            SPRING_DATASOURCE_URL: jdbc:postgresql://database:5432/user_import
-            SPRING_DATASOURCE_USERNAME: postgres
-            SPRING_DATASOURCE_PASSWORD: password
-            SPRING_RABBITMQ_HOST: rabbitmq
-            SPRING_RABBITMQ_PORT: 5672
-            RABBITMQ_DEFAULT_USER: guest
-            RABBITMQ_DEFAULT_PASS: guest
-            LOGGING_LEVEL_ROOT: INFO
+            SPRING_DATASOURCE_URL: jdbc:postgresql://database:5432/user_import # JDBC URL for the database
+            SPRING_DATASOURCE_USERNAME: postgres # Database username
+            SPRING_DATASOURCE_PASSWORD: password # Database password
+            SPRING_RABBITMQ_HOST: rabbitmq # RabbitMQ host
+            SPRING_RABBITMQ_PORT: 5672 # RabbitMQ port
+            RABBITMQ_DEFAULT_USER: guest # RabbitMQ user
+            RABBITMQ_DEFAULT_PASS: guest # RabbitMQ password
+            LOGGING_LEVEL_ROOT: INFO # Logging level
         ports:
             - "8080:8080"
         networks:
