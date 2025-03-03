@@ -1,6 +1,6 @@
 services:
     database:
-        image: postgres:17-alpine
+        image: postgres:17.4-alpine
         container_name: user_import_db
         restart: always # Always restart the container if it stops
         environment:
@@ -21,7 +21,7 @@ services:
             - batch-users
 
     rabbitmq:
-        image: rabbitmq:3-management
+        image: rabbitmq:4.0.7-management-alpine
         container_name: user_import_rabbitmq
         restart: always # Always restart the container if it stops
         environment:

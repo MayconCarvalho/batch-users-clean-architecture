@@ -1,4 +1,4 @@
-package br.com.batch.users.presentation.controller.exception.exception;
+package br.com.batch.users.presentation.controller.exception;
 
 import br.com.batch.users.domain.exception.EmailInvalidException;
 import br.com.batch.users.domain.exception.UserImportListIsNullException;
@@ -22,7 +22,7 @@ public class GlobalExceptionHandler {
         final var errorResponse = ErrorResponseDto.builder()
                 .status(HttpStatus.NOT_FOUND.value())
                 .message(ex.getMessage())
-                .timestamp(LocalDateTime.now())
+                .timestamp(LocalDateTime.now().toString())
                 .build();
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
@@ -33,7 +33,7 @@ public class GlobalExceptionHandler {
         final var errorResponse = ErrorResponseDto.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
                 .message(ex.getMessage())
-                .timestamp(LocalDateTime.now())
+                .timestamp(LocalDateTime.now().toString())
                 .build();
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
@@ -44,7 +44,7 @@ public class GlobalExceptionHandler {
         final var errorResponse = ErrorResponseDto.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
                 .message(ex.getMessage())
-                .timestamp(LocalDateTime.now())
+                .timestamp(LocalDateTime.now().toString())
                 .build();
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
@@ -55,7 +55,7 @@ public class GlobalExceptionHandler {
         final var errorResponse = ErrorResponseDto.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
                 .message(ex.getMessage())
-                .timestamp(LocalDateTime.now())
+                .timestamp(LocalDateTime.now().toString())
                 .build();
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
@@ -66,7 +66,7 @@ public class GlobalExceptionHandler {
         final var errorResponse = ErrorResponseDto.builder()
                 .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
                 .message("An unexpected error occurred: " + ex.getMessage())
-                .timestamp(LocalDateTime.now())
+                .timestamp(LocalDateTime.now().toString())
                 .build();
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
     }

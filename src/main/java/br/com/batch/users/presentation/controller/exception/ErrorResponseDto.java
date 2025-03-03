@@ -1,4 +1,4 @@
-package br.com.batch.users.presentation.controller.exception.exception;
+package br.com.batch.users.presentation.controller.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,5 +15,5 @@ public class ErrorResponseDto {
 
     private int status;
     private String message;
-    private LocalDateTime timestamp;
+    private String timestamp;
 }
