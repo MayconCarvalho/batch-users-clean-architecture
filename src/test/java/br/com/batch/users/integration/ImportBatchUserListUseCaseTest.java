@@ -33,8 +33,8 @@ class ImportBatchUserListUseCaseTest extends IntegrationTestsConfig {
         final String requestBatchUserList = prefixJsonRequest.formatted("batch-list-user.json");
         final String responseBatchUserList = prefixJsonResponse.formatted("batch-list-user-mixed.json");
 
-        final var usersRequest = readJsonListFile(requestBatchUserList, new TypeReference<List<UserInputDto>>() {});
-        final var usersResponse = readJsonListFile(responseBatchUserList, new TypeReference<List<UserOutputDto>>() {});
+        final var usersRequest = readJsonListFile(requestBatchUserList, new TypeReference<List<UserInputDto>>() { });
+        final var usersResponse = readJsonListFile(responseBatchUserList, new TypeReference<List<UserOutputDto>>() { });
 
         final var response = given()
                 .contentType(ContentType.JSON)
@@ -66,8 +66,8 @@ class ImportBatchUserListUseCaseTest extends IntegrationTestsConfig {
         final String requestSingleUser = prefixJsonRequest.formatted("single-user.json");
         final String responseSingleUser = prefixJsonResponse.formatted("single-user-success.json");
 
-        final var usersRequest = readJsonObjectFile(requestSingleUser, new TypeReference<ImportUserInputDto>() {});
-        final var usersResponse = readJsonObjectFile(responseSingleUser, new TypeReference<UserOutputDto>() {});
+        final var usersRequest = readJsonObjectFile(requestSingleUser, new TypeReference<ImportUserInputDto>() { });
+        final var usersResponse = readJsonObjectFile(responseSingleUser, new TypeReference<UserOutputDto>() { });
 
         final var response = given()
                 .contentType(ContentType.JSON)
@@ -92,8 +92,8 @@ class ImportBatchUserListUseCaseTest extends IntegrationTestsConfig {
         final String requestSingleUser = prefixJsonRequest.formatted("single-user-invalid-email.json");
         final String responseSingleUser = prefixJsonResponse.formatted("single-user-error-exception.json");
 
-        final var usersRequest = readJsonObjectFile(requestSingleUser, new TypeReference<ImportUserInputDto>() {});
-        final var usersResponse = readJsonObjectFile(responseSingleUser, new TypeReference<ErrorResponseDto>() {});
+        final var usersRequest = readJsonObjectFile(requestSingleUser, new TypeReference<ImportUserInputDto>() { });
+        final var usersResponse = readJsonObjectFile(responseSingleUser, new TypeReference<ErrorResponseDto>() { });
 
         final var response = given()
                 .contentType(ContentType.JSON)

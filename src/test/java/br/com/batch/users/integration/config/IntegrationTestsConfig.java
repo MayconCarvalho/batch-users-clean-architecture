@@ -29,7 +29,7 @@ public abstract class IntegrationTestsConfig {
     @LocalServerPort
     private Integer port; // Inject the random port used by the embedded server
 
-    private static final ObjectMapper objectMapper = new ObjectMapper();
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     @Container
     private static final PostgreSQLContainer<?> POSTGRES_CONTAINER = new PostgreSQLContainer<>(
@@ -42,7 +42,7 @@ public abstract class IntegrationTestsConfig {
     );
 
     @Container
-    private static final WireMockContainer wireMockContainer = new WireMockContainer(
+    private static final WireMockContainer WIRE_MOCK_CONTAINER = new WireMockContainer(
             "wiremock/wiremock:3.11.0-alpine" // Use the WireMock 3.11.0-alpine image
     );
 
@@ -62,7 +62,7 @@ public abstract class IntegrationTestsConfig {
     }
 
     @DynamicPropertySource
-    private static void configureProperties(DynamicPropertyRegistry registry) {
+    private static void configureProperties(final DynamicPropertyRegistry registry) {
         // Dynamically set the properties for the database and RabbitMQ connections
         registry.add("spring.datasource.url", POSTGRES_CONTAINER::getJdbcUrl);
         registry.add("spring.datasource.username", POSTGRES_CONTAINER::getUsername);
@@ -74,9 +74,9 @@ public abstract class IntegrationTestsConfig {
     }
 
     private static void startWireMock() {
-        wireMockContainer.start();
-        WireMock.configureFor(wireMockContainer.getHost(), wireMockContainer.getMappedPort(8080));
-        wireMockContainer.getBaseUrl();
+        WIRE_MOCK_CONTAINER.start();
+        WireMock.configureFor(WIRE_MOCK_CONTAINER.getHost(), WIRE_MOCK_CONTAINER.getMappedPort(8080));
+        WIRE_MOCK_CONTAINER.getBaseUrl();
     }
 
     @BeforeEach
@@ -84,15 +84,15 @@ public abstract class IntegrationTestsConfig {
         RestAssured.baseURI = "http://localhost:" + port;
     }
 
-    public static <T> List<T> readJsonListFile(String filePath, TypeReference<List<T>> typeReference) throws IOException {
-        return objectMapper.readValue(readFromResource(filePath), typeReference);
+    public static <T> List<T> readJsonListFile(final String filePath, final TypeReference<List<T>> typeReference) throws IOException {
+        return OBJECT_MAPPER.readValue(readFromResource(filePath), typeReference);
     }
 
-    public static <T> T readJsonObjectFile(String filePath, TypeReference<T> typeReference) throws IOException {
-        return objectMapper.readValue(readFromResource(filePath), typeReference);
+    public static <T> T readJsonObjectFile(final String filePath, final TypeReference<T> typeReference) throws IOException {
+        return OBJECT_MAPPER.readValue(readFromResource(filePath), typeReference);
     }
 
-    private static String readFromResource(String filePath) throws IOException {
+    private static String readFromResource(final String filePath) throws IOException {
         return IOUtils.resourceToString(filePath, StandardCharsets.UTF_8);
     }
 
