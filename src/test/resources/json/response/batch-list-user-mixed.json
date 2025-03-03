@@ -1,0 +1,102 @@
+[
+  {
+    "id": null,
+    "email": "user1@example",
+    "status": "FAILED"
+  },
+  {
+    "id": "dc61b749-642e-430f-94ed-7fe54909961d",
+    "email": "user2@example.com",
+    "status": "PENDING"
+  },
+  {
+    "id": null,
+    "email": "user3@example",
+    "status": "FAILED"
+  },
+  {
+    "id": "c972fdab-b436-43dc-8698-fe57627d1aff",
+    "email": "user4@example.com",
+    "status": "PENDING"
+  },
+  {
+    "id": null,
+    "email": "user5@example",
+    "status": "FAILED"
+  },
+  {
+    "id": "b078c41c-54a1-4878-a0dd-423e77c78307",
+    "email": "user6@example.com",
+    "status": "PENDING"
+  },
+  {
+    "id": null,
+    "email": "user7@example",
+    "status": "FAILED"
+  },
+  {
+    "id": "b5ba3bfa-f6a3-4fba-8563-4ea7798619a3",
+    "email": "user8@example.com",
+    "status": "PENDING"
+  },
+  {
+    "id": null,
+    "email": "user9@example",
+    "status": "FAILED"
+  },
+  {
+    "id": "a76c5080-8bcc-4cc3-a87f-2f60057cfe70",
+    "email": "user10@example.com",
+    "status": "PENDING"
+  },
+  {
+    "id": null,
+    "email": "user11@example",
+    "status": "FAILED"
+  },
+  {
+    "id": "7bbb33b9-44d3-4258-a6bb-651f0139133d",
+    "email": "user12@example.com",
+    "status": "PENDING"
+  },
+  {
+    "id": null,
+    "email": "user13@example",
+    "status": "FAILED"
+  },
+  {
+    "id": "e1ec94d7-f440-4774-bdd1-54cc9b73e6f4",
+    "email": "user14@example.com",
+    "status": "PENDING"
+  },
+  {
+    "id": null,
+    "email": "user15@example",
+    "status": "FAILED"
+  },
+  {
+    "id": "20f37155-974e-4ce1-9a98-87d1b4db78a6",
+    "email": "user16@example.com",
+    "status": "PENDING"
+  },
+  {
+    "id": null,
+    "email": "user17@example",
+    "status": "FAILED"
+  },
+  {
+    "id": "1fa33952-298d-4e1c-a5d2-700e29afdc9c",
+    "email": "user18@example.com",
+    "status": "PENDING"
+  },
+  {
+    "id": null,
+    "email": "user19@example",
+    "status": "FAILED"
+  },
+  {
+    "id": "1328a7fb-857c-4d44-9a6d-0a65c7fb8430",
+    "email": "user20@example.com",
+    "status": "PENDING"
+  }
+]
